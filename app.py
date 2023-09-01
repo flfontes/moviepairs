@@ -15,35 +15,44 @@ class App(ttb.Frame):
         super().__init__(parent)
         self.pack(expand=True, fill="both")
 
-        self.button_frame = ttb.Frame(self)
-        self.button_frame.pack(padx=20, pady=(20, 10), fill="x")
+        # Frame containing the main search buttons
+        self.bframe = ttb.Frame(self)
+        self.bframe.pack(padx=20, pady=(20, 10), fill="x")
 
-        self.search_button01 = ttb.Button(
-            master=self.button_frame,
-            text="Search First Actor",
-            command=self.actor_search,
+        # Button
+        self.button01 = ttb.Button(
+            master=self.bframe,
+            text="Search First Actor",  # ! TODO - Can we change the text of the button on click?
+            command=self.actor_search,  # ! TODO - Is lambda is used, can I pass the button as an argument to the function?
             bootstyle="primary outline",
+            state="normal",  # ! TODO
         )
-        self.search_button01.pack(padx=(0, 10), expand=True, fill="x", side="left")
+        self.button01.pack(padx=(0, 10), expand=True, fill="x", side="left")
 
-        self.search_button02 = ttb.Button(
-            master=self.button_frame,
+        self.button02 = ttb.Button(
+            master=self.bframe,
             text="Search Second Actor",
             command=self.actor_search,
             bootstyle="primary outline",
         )
-        self.search_button02.pack(padx=(10, 0), expand=True, fill="x", side="left")
+        self.button02.pack(padx=(10, 0), expand=True, fill="x", side="left")
 
-        self.movie_list = ttb.Frame(self, bootstyle="primary")
-        self.movie_list.pack(padx=20, pady=(10, 20), fill="both", expand=True)
-        
-        self.counter = ttb.Label(self.movie_list, text = "Nothing Happened")
+        self.movlist = ttb.Frame(self, bootstyle="primary")
+        self.movlist.pack(padx=20, pady=(10, 20), fill="both", expand=True)
+
+        self.counter = ttb.Label(self.movlist, text="Nothing Happened")
         self.counter.pack()
 
-        
+
     # Actor Search
     def actor_search(self):
-        self.counter.config(text = "Button Pressed")
+    # def actor_search(self, button) :
+        """
+        IDEAS FOR THE FUNCTIONALITY:
+        - Change button label to actor's name
+        - Disable button
+        """
+        self.counter.config(text="Button Pressed")
 
 
 if __name__ == "__main__":
@@ -58,3 +67,10 @@ if __name__ == "__main__":
     App(root)
 
     root.mainloop()
+
+    """
+    FUNCTIONALITY IDEAS
+    - Style changes (dark vs light mode)
+    - More than 2 actors match
+    - ...
+    """
