@@ -15,31 +15,35 @@ class App(ttb.Frame):
         super().__init__(parent)
         self.pack(expand=True, fill="both")
 
-        button_frame = ttb.Frame(self)
-        button_frame.pack(padx=20, pady=(20, 10), fill="x")
+        self.button_frame = ttb.Frame(self)
+        self.button_frame.pack(padx=20, pady=(20, 10), fill="x")
 
-        search_button01 = ttb.Button(
-            master=button_frame,
+        self.search_button01 = ttb.Button(
+            master=self.button_frame,
             text="Search First Actor",
             command=self.actor_search,
             bootstyle="primary outline",
         )
-        search_button01.pack(padx=(0, 10), expand=True, fill="x", side="left")
+        self.search_button01.pack(padx=(0, 10), expand=True, fill="x", side="left")
 
-        search_button02 = ttb.Button(
-            master=button_frame,
+        self.search_button02 = ttb.Button(
+            master=self.button_frame,
             text="Search Second Actor",
             command=self.actor_search,
             bootstyle="primary outline",
         )
-        search_button02.pack(padx=(10, 0), expand=True, fill="x", side="left")
+        self.search_button02.pack(padx=(10, 0), expand=True, fill="x", side="left")
 
-        movie_list = ttb.Frame(self, bootstyle="primary")
-        movie_list.pack(padx=20, pady=(10, 20), fill="both", expand=True)
+        self.movie_list = ttb.Frame(self, bootstyle="primary")
+        self.movie_list.pack(padx=20, pady=(10, 20), fill="both", expand=True)
+        
+        self.counter = ttb.Label(self.movie_list, text = "Nothing Happened")
+        self.counter.pack()
 
+        
     # Actor Search
     def actor_search(self):
-        pass
+        self.counter.config(text = "Button Pressed")
 
 
 if __name__ == "__main__":
