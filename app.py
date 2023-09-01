@@ -19,23 +19,15 @@ class App(ttb.Frame):
         self.bframe = ttb.Frame(self)
         self.bframe.pack(padx=20, pady=(20, 10), fill="x")
 
-        # Button
-        self.button01 = ttb.Button(
+        # Search Button for Actors
+        self.button = ttb.Button(
             master=self.bframe,
-            text="Search First Actor",  # ! TODO - Can we change the text of the button on click?
-            command=self.actor_search,  # ! TODO - Is lambda is used, can I pass the button as an argument to the function?
+            text="Search Actors",
+            command=lambda: self.actor_search(self.button),
             bootstyle="primary outline",
-            state="normal",  # ! TODO
+            state="normal",
         )
-        self.button01.pack(padx=(0, 10), expand=True, fill="x", side="left")
-
-        self.button02 = ttb.Button(
-            master=self.bframe,
-            text="Search Second Actor",
-            command=self.actor_search,
-            bootstyle="primary outline",
-        )
-        self.button02.pack(padx=(10, 0), expand=True, fill="x", side="left")
+        self.button.pack(expand=True, fill="x")
 
         self.movlist = ttb.Frame(self, bootstyle="primary")
         self.movlist.pack(padx=20, pady=(10, 20), fill="both", expand=True)
@@ -45,15 +37,31 @@ class App(ttb.Frame):
 
 
     # Actor Search
-    def actor_search(self):
-    # def actor_search(self, button) :
+    def actor_search(self, button) :
         """
         IDEAS FOR THE FUNCTIONALITY:
-        - Change button label to actor's name
-        - Disable button
+        - ...
         """
-        self.counter.config(text="Button Pressed")
+        self.input_name01 = ttb.Querybox.get_string(
+            parent = self,
+            prompt = "What is the name of the first actor you are looking for?",
+            title = "Input First Actor",
+        )
+        
+        self.input_name02 = ttb.Querybox.get_string(
+            parent = self,
+            prompt = "What is the name of the other actor you are looking for?",
+            title = "Input Second Actor",
+        )
+        
+        button["text"] = f"{self.input_name01} and {self.input_name02}"
+        button["state"] = "disabled"
+        
+        self.request_actors()
 
+
+    def request_actors(self):
+        pass
 
 if __name__ == "__main__":
     root = ttb.Window(
