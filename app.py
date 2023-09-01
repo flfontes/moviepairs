@@ -1,4 +1,9 @@
+import os
 from tkinter import *
+
+from dotenv import load_dotenv
+
+import requests as r
 
 import ttkbootstrap as ttb
 from ttkbootstrap.constants import *
@@ -12,8 +17,14 @@ class App(ttb.Frame):
 
     # Main frame
     def __init__(self, parent):
+        """
+        ...
+        """
         super().__init__(parent)
         self.pack(expand=True, fill="both")
+
+        load_dotenv()
+        self.__api_key = os.getenv("api_key")
 
         # Frame containing the main search buttons
         self.bframe = ttb.Frame(self)
@@ -39,14 +50,15 @@ class App(ttb.Frame):
     # Actor Search
     def actor_search(self, button) :
         """
-        IDEAS FOR THE FUNCTIONALITY:
-        - ...
+        ...
         """
         self.input_name01 = ttb.Querybox.get_string(
             parent = self,
             prompt = "What is the name of the first actor you are looking for?",
             title = "Input First Actor",
         )
+        
+        self.request_actors(self.input_name01)
         
         self.input_name02 = ttb.Querybox.get_string(
             parent = self,
@@ -57,11 +69,17 @@ class App(ttb.Frame):
         button["text"] = f"{self.input_name01} and {self.input_name02}"
         button["state"] = "disabled"
         
-        self.request_actors()
+        self.request_actors(self.input_name01, self.input_name02)
 
 
-    def request_actors(self):
-        pass
+    def request_actors(self, actor):
+        
+        self.response = r.get(f"https://imdb-api.com/en/API/SearchName/{self.__api_key}/{actor}")
+        
+        if self.response.status_code != 200 or len(self.response.json()["results"]) == 0:
+            print(f"{actor.title()} was not found!")
+        else:
+            print(f"{actor.title()} was found!")        
 
 if __name__ == "__main__":
     root = ttb.Window(
