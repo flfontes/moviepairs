@@ -1,5 +1,7 @@
 import os
-from tkinter import *
+import tkinter as tk
+
+import json # ! Temporary import, useful for troubleshooting
 
 from dotenv import load_dotenv
 
@@ -7,7 +9,7 @@ import requests as r
 
 import ttkbootstrap as ttb
 from ttkbootstrap.constants import *
-from ttkbootstrap.dialogs import Messagebox
+from ttkbootstrap.dialogs import Dialog
 
 
 class App(ttb.Frame):
@@ -25,28 +27,38 @@ class App(ttb.Frame):
 
         load_dotenv()
         self.__api_key = os.getenv("api_key")
+    
+        self.layout()
+    
+    
+    def layout(self):
 
         # Frame containing the main search buttons
         self.bframe = ttb.Frame(self)
         self.bframe.pack(padx=20, pady=(20, 10), fill="x")
 
-        # Search Button for Actors
-        self.button = ttb.Button(
-            master=self.bframe,
-            text="Search Actors",
-            command=lambda: self.actor_search(self.button),
-            bootstyle="primary outline",
-            state="normal",
-        )
-        self.button.pack(expand=True, fill="x")
+        self.buttons()
 
         self.movlist = ttb.Frame(self, bootstyle="primary")
         self.movlist.pack(padx=20, pady=(10, 20), fill="both", expand=True)
 
-        self.counter = ttb.Label(self.movlist, text="Nothing Happened")
+        self.movie_list()
+
+
+    def buttons(self):
+        self.button=ttb.Button(
+            master=self.bframe,
+            text="Search Actors",
+            command=lambda: self.actor_search(self.button),
+            bootstyle="primary",
+        )
+        self.button.pack(expand=True, fill="x")
+
+    # Content of the list frame
+    def movie_list(self):
+        self.counter=ttb.Label(self.movlist, text="Nothing Happened")
         self.counter.pack()
-
-
+        
     # Actor Search
     def actor_search(self, button) :
         """
@@ -66,20 +78,45 @@ class App(ttb.Frame):
             title = "Input Second Actor",
         )
         
-        button["text"] = f"{self.input_name01} and {self.input_name02}"
+        button["text"] = f"Actors Picked: {self.input_name01.title()} and {self.input_name02.title()}"
         button["state"] = "disabled"
         
-        self.request_actors(self.input_name01, self.input_name02)
+        self.request_actors(self.input_name02)
 
 
     def request_actors(self, actor):
         
-        self.response = r.get(f"https://imdb-api.com/en/API/SearchName/{self.__api_key}/{actor}")
+        self.response = r.get(
+            url=f"https://api.themoviedb.org/3/search/person?query={actor.replace(' ', '%20')}&include_adult=false&language=en-US&page=1", 
+            headers={
+                "accept": "application/json",
+                "Authorization": f"Bearer {self.__api_key}"
+                }
+            )
+        print(self.response.status_code)
         
-        if self.response.status_code != 200 or len(self.response.json()["results"]) == 0:
-            print(f"{actor.title()} was not found!")
+        if self.response.status_code == 200:# or len(self.response.json()["results"]) == 0:
+            print(f"{actor.title()} was found!")
         else:
-            print(f"{actor.title()} was found!")        
+            print(f"{actor.title()} was not found!")
+        
+        with open(f"{actor}.json", "w") as outfile:
+            json.dump(self.response.json(), outfile, indent=4)
+        
+        self.actor_info = {
+            "name": self.response.json()["results"][0]["name"],
+            "id": self.response.json()["results"][0]["id"],
+            "pic": self.response.json()["results"][0]["profile_path"]
+        }
+        
+        self.confirmation = Dialog(
+            self,
+            title = "Test")
+        self.confirmation.build()
+        self.confirmation.show()
+        
+        print(self.actor_info)
+
 
 if __name__ == "__main__":
     root = ttb.Window(
